@@ -1,3 +1,4 @@
+const ListaDeseados= require('../models/ListaDeseados');
 const Producto = require('../models/Producto');
 const Usuario = require('../models/Usuario');
 const JWT = require("jsonwebtoken");
@@ -9,37 +10,63 @@ const CrearToken = (usuario, palabraSecreta, expiresIn) => {
 
 const Resolvers={
  Query:{
-    getListaDeseados:async(_,id)=>{
-      const producto = await Usuario.findById({ id })
+   getPrecioProducto: async(_,args)=>{
+      const {id}=args;
+      const producto = await Producto.findById( id.toString() )
       if (!producto) {
           throw new Error("No existe el producto")
       }
       return producto
-    }
+   },
+   leerProducto: async(_,args)=>{
+      const {id}=args;
+      const producto = await Producto.findById( id.toString() )
+      if (!producto) {
+          throw new Error("No existe el producto")
+      }
+      return producto
+   },
+   obtenerProductos: async(_,args)=>{
+      try{
+         const producto = await Producto.find({});
+         return producto;
+      }catch(error){
+         console.log(error)
+      }
+   }
  },
  Mutation:{
-   registroUsuarioNuevo: async(_,args)=>{
-      const {correo,pass}=args;
-      const existeU = await Usuario.findOne({ correo })
-      if(existeU){
-         throw new Error("Ya existe un usuario registrado con ese email");
+   updatePrecioProducto :async(_,{id,nuevoPrecio})=>{
+      const existeProducto = await Producto.findById({id});
+      if(!existeProducto){
+         throw new Error("El producto no ha sido registrado en la base de datos");
       }
-       //Hashear Password
-       const salt = await bcryptjs.genSalt(10);
-       args.pass = await bcryptjs.hash(pass, salt)
-       try {
-         const usuario = new Usuario(args)
-         usuario.save()
-         return usuario;
-     } catch (error) {
-         console.log(error)
-     }
+      producto = await Producto.findOneAndUpdate({ _id: id }, nuevoPrecio, { new: true })
+      return producto;
    },
-   agregarLista: async(_,args)=>{
-      const {idUsuario,idProducto}=args;
-      
-   }
+   crearProducto:async(_,args)=>{
+      const {nombre}= args;
+         const exist = await Producto.findOne({nombre});
+         if(exist){
+            throw new Error("Este producto ya fue registrado");
+         }
+         try{
+            const producto = new Producto(args)
+            producto.save()
+            return producto;
+         }catch(error){
+            console.log(error)
+         }
 
+   },
+   eliminarProducto:async(_,{id})=>{
+      const existeProducto = await Producto.findById(id);
+      if (!existeProducto) {
+          throw new Error("El producto no ha sido registrado en la base de datos");
+      }
+      producto = await Producto.findOneAndDelete({ _id: id })
+      return "El producto se ha eliminado con éxito";
+   }
  }
 }
 module.exports= Resolvers;

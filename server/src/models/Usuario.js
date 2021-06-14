@@ -12,9 +12,8 @@ const Usuario = new mongoose.Schema({
         trim: true,
         unique:true
     },
-    listaDeseados:[{ 
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Producto'
-    }]
+    listaDeseados:{
+        type:Array
+    }
 });
 module.exports = new mongoose.model("CatUsuario",Usuario);
