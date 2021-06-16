@@ -4,16 +4,15 @@ const Producto = mongoose.Schema({
         type:String,
         required:true,
         unique:true
-    },    
+    },
     precio:{
-        type:Number,//Mongoose no maneja Float (?)
-        required:true,
+        type:Array
     },
     imagen:{
         type:String
     },
     url:{
-        type:String
+        type:Array
     }
 });
 module.exports = new mongoose.model("CatProducto",Producto);
