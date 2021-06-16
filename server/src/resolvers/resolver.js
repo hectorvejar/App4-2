@@ -37,22 +37,21 @@ const Resolvers={
       producto = await Producto.findOneAndUpdate({ _id: id }, nuevoPrecio, { new: true })
       return producto;
    },
-   crearProducto:async(_,args)=>{
-      try{
+   crearProducto:async(_,args)=>{      
       const {nombre}= args;
-         const exist = await Producto.findOne({nombre});
-         if(exist){
-            throw new Error("Este producto ya fue registrado");
-         }
-      }catch(error){
-         try{
-         const producto = new Producto(args)
+      const exist = await Producto.findOne({nombre});
+      if(exist){
+         throw new Error("Este producto ya fue registrado");
+      }      
+      try{
+         const producto = new Producto(args.producto)
+         console.log(producto)
+         // console.log(args)
          producto.save()
          return producto;
-      }catch(error){
+      }catch(error){         
          console.log(error)
-      }
-      }
+      }      
       
    },
    eliminarProducto:async(_,{id})=>{

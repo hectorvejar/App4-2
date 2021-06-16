@@ -2,8 +2,7 @@ const mongoose = require("mongoose");
 const Producto = mongoose.Schema({ 
     nombre:{
         type:String,
-        required:true,
-        unique:true
+        required:true
     },
     precio:{
         type:Array
