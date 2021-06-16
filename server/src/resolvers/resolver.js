@@ -25,18 +25,11 @@ const Resolvers={
           throw new Error("No existe el producto")
       }
       return producto
-   },
-   obtenerProductos: async(_,args)=>{
-      try{
-         const producto = await Producto.find({});
-         return producto;
-      }catch(error){
-         console.log(error)
-      }
    }
  },
  Mutation:{
-   updatePrecioProducto :async(_,{id,nuevoPrecio})=>{
+   updatePrecioProducto :async(_,args)=>{
+      const {id,nuevoPrecio}=args; //awanta no se si esta bien
       const existeProducto = await Producto.findById({id});
       if(!existeProducto){
          throw new Error("El producto no ha sido registrado en la base de datos");
@@ -45,19 +38,22 @@ const Resolvers={
       return producto;
    },
    crearProducto:async(_,args)=>{
+      try{
       const {nombre}= args;
          const exist = await Producto.findOne({nombre});
          if(exist){
             throw new Error("Este producto ya fue registrado");
          }
+      }catch(error){
          try{
-            const producto = new Producto(args)
-            producto.save()
-            return producto;
-         }catch(error){
-            console.log(error)
-         }
-
+         const producto = new Producto(args)
+         producto.save()
+         return producto;
+      }catch(error){
+         console.log(error)
+      }
+      }
+      
    },
    eliminarProducto:async(_,{id})=>{
       const existeProducto = await Producto.findById(id);
