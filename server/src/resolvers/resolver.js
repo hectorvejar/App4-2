@@ -10,9 +10,9 @@ const CrearToken = (usuario, palabraSecreta, expiresIn) => {
 
 const Resolvers={
  Query:{
-   getPrecioProducto: async(_,args)=>{
-      const {id}=args;
-      const producto = await Producto.findById( id.toString() )
+   getPrecioProducto: async(_,args)=>{ //incompleto
+      const {nombre}=args;
+      const producto = await Producto.find({nombre})
       if (!producto) {
           throw new Error("No existe el producto")
       }
@@ -28,16 +28,15 @@ const Resolvers={
    }
  },
  Mutation:{
-   updatePrecioProducto :async(_,args)=>{
-      const {id,nuevoPrecio}=args; //awanta no se si esta bien
-      const existeProducto = await Producto.findById({id});
+   updatePrecioProducto :async(_,{id,nuevoPrecio})=>{
+      const existeProducto = await Producto.findById(id.toString());
       if(!existeProducto){
          throw new Error("El producto no ha sido registrado en la base de datos");
       }
-      producto = await Producto.findOneAndUpdate({ _id: id }, nuevoPrecio, { new: true })
+      producto = await Producto.findOneAndUpdate({ _id: id }, nuevoPrecio, { new: true });
       return producto;
    },
-   crearProducto:async(_,args)=>{      
+   crearProducto:async(_,args)=>{      //ver lo de los permisos de la db
       const {nombre}= args;
       const exist = await Producto.findOne({nombre});
       if(exist){
