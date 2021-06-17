@@ -25,6 +25,15 @@ const Resolvers={
           throw new Error("No existe el producto")
       }
       return producto
+   },
+   obtenerProductos: async() =>{
+      try{
+         const productos = Producto.find();
+         console.log (productos);
+         return productos;
+      }catch(error){         
+         console.log(error)
+      }   
    }
  },
  Mutation:{
