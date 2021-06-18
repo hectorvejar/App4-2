@@ -42,7 +42,8 @@ const Resolvers={
       if(!existeProducto){
          throw new Error("El producto no ha sido registrado en la base de datos");
       }
-      producto = await Producto.findOneAndUpdate({ _id: id }, nuevoPrecio, { new: true });
+      const NuevoPrecio = [{...nuevoPrecio}]
+      producto = await Producto.findOneAndUpdate({ _id: id }, {$set:{'precio':NuevoPrecio}});
       return producto;
    },
    crearProducto:async(_,args)=>{      //ver lo de los permisos de la db

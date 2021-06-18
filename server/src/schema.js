@@ -49,7 +49,7 @@ type Query{
    #getListaDeseados(id:ID!):ListaDeseados
    getPrecioProducto(id:ID!):respuestaGetPrecio #pendiente
    leerProducto(id:ID):Producto
-   obtenerProductos: [Producto!]!  #pendiente
+   obtenerProductos: [Producto!]!
  }
  type Mutation{
      updatePrecioProducto(id:ID,nuevoPrecio:preciosInput!): Producto  #pendiente 
