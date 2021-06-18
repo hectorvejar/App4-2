@@ -23,8 +23,12 @@ const Resolvers={
       const producto = await Producto.findById( id.toString() )
       if (!producto) {
           throw new Error("No existe el producto")
-      }
+      }      
       return producto
+   },
+   obtenerProductos: async(_,args)=>{
+      const productos = await Producto.find({})
+      return productos
    }
  },
  Mutation:{
@@ -44,9 +48,7 @@ const Resolvers={
          throw new Error("Este producto ya fue registrado");
       }      
       try{
-         const producto = new Producto(args.producto)
-         console.log(producto)
-         // console.log(args)
+         const producto = new Producto(args.producto)           
          producto.save()
          return producto;
       }catch(error){         
