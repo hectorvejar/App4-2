@@ -10,9 +10,9 @@ const CrearToken = (usuario, palabraSecreta, expiresIn) => {
 
 const Resolvers={
  Query:{
-   getPrecioProducto: async(_,args)=>{ //incompleto
+   getPrecioProducto: async(_,args)=>{ 
       const {nombre}=args;
-      const producto = await Producto.find({nombre})
+      const producto = await Producto.findOne({nombre});
       if (!producto) {
           throw new Error("No existe el producto")
       }
@@ -23,14 +23,9 @@ const Resolvers={
       const producto = await Producto.findById( id.toString() )
       if (!producto) {
           throw new Error("No existe el producto")
-      }      
+      }
       return producto
    },
-<<<<<<< HEAD
-   obtenerProductos: async(_,args)=>{
-      const productos = await Producto.find({})
-      return productos
-=======
    obtenerProductos: async() =>{
       try{
          const productos = Producto.find();
@@ -39,33 +34,33 @@ const Resolvers={
       }catch(error){         
          console.log(error)
       }   
->>>>>>> 08a79642ed0bf5a6ba5f2487f600bb8886994bb6
    }
  },
  Mutation:{
-   updatePrecioProducto :async(_,{id,nuevoPrecio})=>{
+   updatePrecioProducto :async(_,args)=>{
+      const {id,precios}=args;
       const existeProducto = await Producto.findById(id.toString());
       if(!existeProducto){
          throw new Error("El producto no ha sido registrado en la base de datos");
       }
-      const NuevoPrecio = [{...nuevoPrecio}]
-      producto = await Producto.findOneAndUpdate({ _id: id }, {$set:{'precio':NuevoPrecio}});
+      producto = await Producto.findOneAndUpdate({ _id: id },{precio:precios}, { new: true });
       return producto;
    },
-   crearProducto:async(_,args)=>{      //ver lo de los permisos de la db
+   crearProducto:async(_,args)=>{      
       const {nombre}= args;
       const exist = await Producto.findOne({nombre});
       if(exist){
          throw new Error("Este producto ya fue registrado");
       }      
       try{
-         const producto = new Producto(args.producto)           
+         const producto = new Producto(args.producto)
+         console.log(producto)
+         // console.log(args)
          producto.save()
          return producto;
       }catch(error){         
          console.log(error)
       }      
-      
    },
    eliminarProducto:async(_,{id})=>{
       const existeProducto = await Producto.findById(id);
