@@ -1,180 +1,70 @@
-const { gql } = require("apollo-server");
+const { gql } = require('apollo-server-express'); //GraphQL para Apollo y Express 
 
 const typeDefs = gql `
-    
-    type Token {
-        token: String
-    }
+ type Usuario{
+     id:ID!
+     correo:String
+     pass:String
+     lista:[ListaDeseados]
+ }
+ type Producto{
+     id:ID!
+     nombre:String
+     precio:[precios]
+     imagen:String
+     url:[urls]
+ }
+ type urls{
+     calzapato:String
+     amazon:String
+ }
+type precios{
+    calzapato:Float
+    amazon:Float
+}
+ type ListaDeseados{
+    id:ID
+    productos:[Producto]
+ }
+ type respuestaPreProd{
+     precio:[precios]
+ }
 
-    type Producto {
-        id: ID
-        nombre: String
-        existencia: Int
-        precio: Float
-        creado: String
-        familia: familiaProducto
-        categoria: ID
-        departamento: String
-        talla: Int
-        uso: String
-        marca: String
-        imagen: [Imagenes]
-        oferta: Float
-    }
-    input ProductoInput {
-        nombre: String!
-        existencia: Int!
-        precio: Float!    
-        familia: familiaProducto!
-        categoria: ID!
-        departamento: String!
-        talla: Int
-        uso: String!
-        marca:String!
-        imagen: [ImagenesInput]
-        oferta: Float
-    }
-    type Imagenes{
-        nombre:String              
-        direccion: String
-    }
-    input ImagenesInput{
-        nombre:String
-        direccion: String
-    }
-    input BuscarProducto {
-        nombre: String!
-    }
-    input ProductoFiltros {
-        categoria: ID        
-        marca:String
-        uso: String
-        talla: Int
-        precioMin:Float
-        precioMax:Float
-        oferta:Float
-        familia: familiaProducto
-        departamento:String
-    }    
-    input AutenticarInput {
-        email: String!
-        password: String!
-    }
-    input CategoriaInput {
-        id: ID
-        nombre: String
-    }
-    type Categoria {
-        id: ID
-        nombre:String
-    }
-    enum familiaProducto {
-        Calzado
-        Ropa
-        Accesorios
-    } 
+input crearInput{
+    nombre:String!
+    precio:preciosInput!
+    imagen:String
+    url:urlsInput
+}
+input preciosInput{
+    calzapato:Float
+    amazon:Float
+}
+input urlsInput{
+    calzapato:String
+    amazon:String
+}
 
-    type Usuario{
-        id: ID
-        nombre : String!
-        apellido : String!
-        telefono : String
-        password: String!
-        direccion : Direccion
-        fechaAlta : String
-        email:String
-    }
-    input UsuarioInput{
-        nombre : String!
-        apellido : String!
-        email: String!
-        password: String!
-        direccion : DireccionInput,
-        telefono:String!    
-    }    
-    type Direccion {
-        id : ID
-        cp: String
-        calle : String
-        numero: String
-        ciudad: String
-        estado : String
-        pais : String
-    }
-    input DireccionInput {
-        cp: String
-        calle : String
-        numero: String
-        ciudad: String
-        estado : String
-        pais : String
-    }
-    
-    type Pedido {
-        id: ID
-        pedido : [PedidoGrupo]
-        total : Float
-        cliente : ID        
-        estado : EstadoPedido
-        creado : String
-        pago: ID
-    }
-    type PedidoGrupo {
-        id: ID!
-        cantidad : Int        
-    }
 
-    
-    input PedidoProductoInput {
-        id: ID!
-        cantidad: Int        
-    }
-    input PedidoInput {
-        pedido: [PedidoProductoInput]
-        total : Float        
-        estado : EstadoPedido!
-        pago: ID     
-    }
-    enum EstadoPedido {
-        PENDIENTE
-        COMPLETADO
-        CANCELADO
-    }
-    
-    type Query {        
-        
-        #Usuario
-        obtenerUsuario(token: String!) : Usuario
-        
-        #Producto
-        obtenerProducto(id: ID!): Producto        
-        obtenerProductosNombre(input: String): [Producto]
-        filtrarProductoCategoria(input : CategoriaInput) : [Producto]
-        obtenerProductosMultiple(input : ProductoFiltros) : [Producto]
-        #Categorias
-        obtenerCategorias:[Categoria]
+type Query{ 
+    #-- Productos -- 
+   getPrecioProducto(nombre:String!):respuestaPreProd
+   leerProducto(id:ID):Producto
+   obtenerProductos: [Producto!]! 
 
-        #Pedidos
-        obtenerPedidos:[Pedido]
-        obtenerPedidosCliente:[Pedido]
-    }
-    type Mutation {
-        # Usuarios
-        nuevoUsuario (input: UsuarioInput): Usuario 
-        autenticarUsuario (input: AutenticarInput ): Token
+    #-- Lista de deseados --
 
-        #Productos
-        nuevoProducto (input: ProductoInput!): Producto
-        ActualizarProducto (id: ID!,input: ProductoInput!): Producto
-        EliminarProducto (id: ID!): String
+ }
+ type Mutation{
+     #--- Productos --
+     updatePrecioProducto(id:ID,precios:preciosInput): Producto 
+     crearProducto(producto:crearInput!):Producto          
+     eliminarProducto(id:ID!):String                                                          
 
-        #Pedidos
-        nuevoPedido(input: PedidoInput): Pedido
-        ActualizarPedido(id : ID!, input: PedidoInput): Pedido
-        EliminarPedido(id:ID!): String
-        
-        #Categoria
-        nuevaCategoria(input: CategoriaInput): Categoria
-    }
-`;
+     #-- Lista de deseados --
+     #agregarLista():ListaDeseados
+     #getListaDeseados():ListaDeseados
+     #elimProducList():String
+ }  
+ `;
 module.exports = typeDefs;
