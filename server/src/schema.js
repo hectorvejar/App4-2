@@ -15,14 +15,15 @@ const typeDefs = gql `
      precio:Float
      imagen:String
      url:String
+     tienda:String
  }
 
-input productoInput{
-    usuario:ID
+input productoInput{    
     nombre:String
     precio:Float
     imagen:String
     url:String
+    tienda:String
 }
 input usuarioInput{    
     email:String
@@ -41,8 +42,8 @@ type Token {
 type Query{ 
     #-- Productos -- 
    leerProducto(id:ID):Producto
-   obtenerProductos: [Producto!]
-
+   obtenerProductos: [Producto]
+   obtenerDeseados: [Producto]
     #-- Lista de deseados --
     #solo para pruebas
     leerUsuarios:[Usuario]
@@ -58,6 +59,8 @@ type Query{
      #Usuarios
      nuevoUsuario(input:usuarioInput!):Usuario
      autenticarUsuario (input: AutenticarInput ): Token
+     cambiarContra(password:String!):String
+     eliminarUsuario:String
  }  
  `;
 module.exports = typeDefs;

@@ -1,8 +1,8 @@
 const http = require('http');
 const { ApolloServer } = require('apollo-server-express');
 require("dotenv").config({path: 'variables.env'});
+const JWT = require("jsonwebtoken");
 const typeDefs = require('./schema');
-//const server = new ApolloServer({ typeDefs ,mocks:true});
 const express = require('express');
 const mongose = require('mongoose');
 const graphqlHTTP= require('express-graphql')
@@ -17,6 +17,16 @@ const server = new ApolloServer({
     resolvers,
     playground: {
         endpoint: 'http://localhost:3000/graphql'
+    },context:({ req }) => {
+      const token = req.headers['authorization'] || "";
+        if (token) {
+            try {
+                const verificar = JWT.verify(token, process.env.SECRETA)
+                return verificar
+            } catch (error) {
+                console.log(error)
+            }
+        }
     }
 });
 server.applyMiddleware({ app });
