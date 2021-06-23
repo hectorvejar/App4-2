@@ -1,5 +1,6 @@
 const http = require('http');
 const { ApolloServer } = require('apollo-server-express');
+require("dotenv").config({path: 'variables.env'});
 const typeDefs = require('./schema');
 //const server = new ApolloServer({ typeDefs ,mocks:true});
 const express = require('express');
@@ -24,7 +25,7 @@ const httpServer = http.createServer(app);
 server.installSubscriptionHandlers(httpServer);
 
 mongose//No deja conectar por la "ñ" en contraseña
-  .connect('mongodb+srv://hector:contraseña@cluster0.qstlf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+  .connect(process.env.DB_MONGOO
   , { useNewUrlParser: true, useUnifiedTopology: true })
   .then( () => {
     app.listen({ port: 3000 }, () => {

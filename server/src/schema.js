@@ -3,68 +3,61 @@ const { gql } = require('apollo-server-express'); //GraphQL para Apollo y Expres
 const typeDefs = gql `
  type Usuario{
      id:ID!
-     correo:String
-     pass:String
-     lista:[ListaDeseados]
+     email:String
+     password:String
+     apellido:String
+     nombre:String
  }
  type Producto{
      id:ID!
+     usuario:ID
      nombre:String
-     precio:[precios]
+     precio:Float
      imagen:String
-     url:[urls]
- }
- type urls{
-     calzapato:String
-     amazon:String
- }
-type precios{
-    calzapato:Float
-    amazon:Float
-}
- type ListaDeseados{
-    id:ID
-    productos:[Producto]
- }
- type respuestaPreProd{
-     precio:[precios]
+     url:String
  }
 
-input crearInput{
-    nombre:String!
-    precio:preciosInput!
+input productoInput{
+    usuario:ID
+    nombre:String
+    precio:Float
     imagen:String
-    url:urlsInput
+    url:String
 }
-input preciosInput{
-    calzapato:Float
-    amazon:Float
+input usuarioInput{    
+    email:String
+    password:String
+    apellido:String
+    nombre:String
 }
-input urlsInput{
-    calzapato:String
-    amazon:String
+input AutenticarInput {
+    email: String!
+    password: String!
 }
-
+type Token {
+    token: String
+}
 
 type Query{ 
     #-- Productos -- 
-   getPrecioProducto(nombre:String!):respuestaPreProd
    leerProducto(id:ID):Producto
-   obtenerProductos: [Producto!]! 
+   obtenerProductos: [Producto!]
 
     #-- Lista de deseados --
-
+    #solo para pruebas
+    leerUsuarios:[Usuario]
  }
  type Mutation{
      #--- Productos --
-     updatePrecioProducto(id:ID,precios:preciosInput): Producto 
-     crearProducto(producto:crearInput!):Producto          
+     updatePrecioProducto(id:ID,input:productoInput!): Producto 
+     crearProducto(producto:productoInput!):Producto          
      eliminarProducto(id:ID!):String                                                          
 
      #-- Lista de deseados --
-     #agregarLista():ListaDeseados
-     #getListaDeseados():ListaDeseados
      #elimProducList():String
+     #Usuarios
+     nuevoUsuario(input:usuarioInput!):Usuario
+     autenticarUsuario (input: AutenticarInput ): Token
  }  
  `;
 module.exports = typeDefs;

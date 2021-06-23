@@ -1,19 +1,23 @@
 const mongoose = require("mongoose");
 const Usuario = new mongoose.Schema({ 
-    correo:{
+    email:{
         type:String,
         required:true,
         trim: true,
         unique:true
     },
-    contraseña:{
+    password:{
         type:String,
         required:true,
-        trim: true,
-        unique:true
+        trim: true        
     },
-    listaDeseados:{
-        type:Array
+    nombre:{
+        type:String,
+        required:true        
+    },
+    apellido:{
+        type:String,
+        required:true
     }
 });
 module.exports = new mongoose.model("CatUsuario",Usuario);

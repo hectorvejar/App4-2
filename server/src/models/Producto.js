@@ -5,13 +5,24 @@ const Producto = mongoose.Schema({
         required:true
     },
     precio:{
-        type:Array
+        type:Number,
+        required:true
     },
     imagen:{
-        type:String
+        type:String,
+        trim:true
     },
     url:{
-        type:Array
+        type:String,
+        trim:true
+    },
+    tienda:{
+        type:String
+    },
+    usuario:{
+        type:mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: 'Usuario'
     }
 });
 module.exports = new mongoose.model("CatProducto",Producto);

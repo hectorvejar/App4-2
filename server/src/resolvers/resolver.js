@@ -10,13 +10,9 @@ const CrearToken = (usuario, palabraSecreta, expiresIn) => {
 
 const Resolvers={
  Query:{
-   getPrecioProducto: async(_,args)=>{ 
-      const {nombre}=args;
-      const producto = await Producto.findOne({nombre});
-      if (!producto) {
-          throw new Error("No existe el producto")
-      }
-      return producto
+   leerUsuarios:async(_,args)=>{
+      const usuarios = Usuario.find({})
+      return usuarios
    },
    leerProducto: async(_,args)=>{
       const {id}=args;
@@ -28,7 +24,7 @@ const Resolvers={
    },
    obtenerProductos: async() =>{
       try{
-         const productos = Producto.find();
+         const productos = Producto.find({});
          console.log (productos);
          return productos;
       }catch(error){         
@@ -69,7 +65,44 @@ const Resolvers={
       }
       producto = await Producto.findOneAndDelete({ _id: id })
       return "El producto se ha eliminado con éxito";
-   }
+   },
+   //usuarios
+   nuevoUsuario: async(_, { input }) => {
+      const { correo,password } = input;
+      //Revisar si usuario ya ha sido registrado
+      const existeU = await Usuario.findOne({ correo })
+      if (existeU) {
+         throw new Error("Ya existe un usuario registrado con ese email")
+      }
+      //Hashear Password
+      const salt = await bcryptjs.genSalt(10);
+      input.password = await bcryptjs.hash(password, salt)
+      //Guardar en DB
+      try {
+         const usuario = new Usuario(input)
+         usuario.save()
+         return usuario;
+      } catch (error) {
+         console.log(error)
+      }
+   },
+   autenticarUsuario: async(_, { input }) => {
+      const { correo, password } = input
+      //Verificar si el usuario existe 
+      const existe = await Usuario.findOne({ correo })
+      if (!existe) {
+          throw new Error("El usuario no existe")
+      }
+      const PasswordCorrecto = await bcryptjs.compare(password, existe.password)
+      if (!PasswordCorrecto) {
+          throw new Error("La contraseña es incorrecta");
+      }
+      //Creacción del token
+      return {
+         //mandamos el token para consevarlo en el header
+          token: CrearToken(existe, process.env.SECRETA, '24h')
+      }
+  }
  }
 }
 module.exports= Resolvers;
