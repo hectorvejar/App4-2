@@ -1,26 +1,18 @@
-const http = require('http');
-const { ApolloServer } = require('apollo-server-express');
+const { ApolloServer } = require('apollo-server');
 require("dotenv").config({path: 'variables.env'});
 const JWT = require("jsonwebtoken");
 const typeDefs = require('./schema');
-const express = require('express');
-const mongose = require('mongoose');
-const graphqlHTTP= require('express-graphql')
-const typeDef = require('../src/schema'); //el schema
 const resolvers = require('./resolvers/resolver');
 //para que permita accesos
 var cors = require('cors')
 //https://buddy.works/tutorials/how-to-connect-mongodb-to-graphql-server
 //usuario: hector    password: contraseña
-
-const app = express()
-app.use(cors())
+const conectarDB = require("../src/config/db");
+conectarDB();
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    playground:true,
-    iintrospection: true
-    ,context:({ req }) => {
+    context:({ req }) => {
       const token = req.headers['authorization'] || "";
         if (token) {
             try {
@@ -32,19 +24,8 @@ const server = new ApolloServer({
         }
     }
 });
-server.applyMiddleware({ app });
-  
-const httpServer = http.createServer(app);
-server.installSubscriptionHandlers(httpServer);
 
-mongose//No deja conectar por la "ñ" en contraseña
-  .connect(process.env.DB_MONGOO
-  , { useNewUrlParser: true, useUnifiedTopology: true })
-  .then( () => {
-    app.listen({ port: process.env.PORT || 3000 }, () => {
-      console.log('Your Apollo Server is running on port '+process.env.PORT )
-    })
-  }, (err) => {
-    console.log(err);
-});
-
+//inicio el servidor (quité express por pedos con el deploy)
+server.listen({port: process.env.PORT || 4000}).then(({ url }) => {
+  console.log(`servidor listo ${url}`)
+})

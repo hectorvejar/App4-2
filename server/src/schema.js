@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express'); //GraphQL para Apollo y Express 
+const { gql } = require('apollo-server'); //GraphQL para Apollo y Express 
 
 const typeDefs = gql `
  type Usuario{

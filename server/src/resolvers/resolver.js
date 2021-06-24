@@ -53,15 +53,19 @@ const Resolvers={
    }
  },
  Mutation:{
-   updatePrecioProducto :async(_,args)=>{
-      
+   updatePrecioProducto :async(_,args)=>{      
+       
       try{
-         const {id,precios}=args;
+         const {input}=args
+         const {precio} = input
+         console.log(precio)
+         const {id}=args;
          const existeProducto = await Producto.findById(id.toString());
          if(!existeProducto){
             throw new Error("El producto no ha sido registrado en la base de datos");
          }
-         producto = await Producto.findOneAndUpdate({ _id: id },{precio:precios}, { new: true });
+         existeProducto.precio= precio
+         producto = await Producto.findOneAndUpdate({ _id: id },existeProducto, { new: true });
          return producto;
       }catch(error){
          console.log(error)
