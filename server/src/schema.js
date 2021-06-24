@@ -44,9 +44,10 @@ type Query{
    leerProducto(id:ID):Producto
    obtenerProductos: [Producto]
    obtenerDeseados: [Producto]
+   leerUsuario:Usuario
     #-- Lista de deseados --
     #solo para pruebas
-    leerUsuarios:[Usuario]
+    
  }
  type Mutation{
      #--- Productos --

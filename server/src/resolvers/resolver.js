@@ -10,9 +10,9 @@ const CrearToken = (usuario, palabraSecreta, expiresIn) => {
 
 const Resolvers={
  Query:{
-   leerUsuarios:async(_,args)=>{
-      const usuarios = Usuario.find({})
-      return usuarios
+   leerUsuario:async(_,args,ctx)=>{
+      const usuario = Usuario.find({_id:ctx.id})
+      return usuario
    },
    leerProducto: async(_,args)=>{
       const {id}=args;
@@ -24,8 +24,7 @@ const Resolvers={
    },
    obtenerProductos: async() =>{
       try{
-         const productos = Producto.find({});
-         console.log (productos);
+         const productos = Producto.find({});         
          return productos;
       }catch(error){         
          console.log(error)
