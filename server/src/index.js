@@ -8,10 +8,13 @@ const mongose = require('mongoose');
 const graphqlHTTP= require('express-graphql')
 const typeDef = require('../src/schema'); //el schema
 const resolvers = require('./resolvers/resolver');
+//para que permita accesos
+var cors = require('cors')
 //https://buddy.works/tutorials/how-to-connect-mongodb-to-graphql-server
 //usuario: hector    password: contraseña
 
 const app = express()
+app.use(cors())
 const server = new ApolloServer({
     typeDefs,
     resolvers,
