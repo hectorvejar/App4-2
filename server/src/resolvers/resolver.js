@@ -11,16 +11,29 @@ const CrearToken = (usuario, palabraSecreta, expiresIn) => {
 const Resolvers={
  Query:{
    leerUsuario:async(_,args,ctx)=>{
-      const usuario = Usuario.find({_id:ctx.id})
-      return usuario
+     try{
+      //   console.log(usuario)
+        console.log(ctx.id)
+        const usuario = Usuario.findById(ctx.id)
+        console.log(usuario)
+        return usuario
+     }catch(error){
+        console.log(usuario)
+        console.log(ctx.id)
+      console.log(error)
+     }
    },
    leerProducto: async(_,args)=>{
-      const {id}=args;
-      const producto = await Producto.findById( id.toString() )
-      if (!producto) {
-          throw new Error("No existe el producto")
+      try{
+         const {id}=args;
+         const producto = await Producto.findById( id.toString() )
+         if (!producto) {
+            throw new Error("No existe el producto")
+         }
+         return producto
+      }catch(error){
+         console.log(error)
       }
-      return producto
    },
    obtenerProductos: async() =>{
       try{
@@ -41,13 +54,18 @@ const Resolvers={
  },
  Mutation:{
    updatePrecioProducto :async(_,args)=>{
-      const {id,precios}=args;
-      const existeProducto = await Producto.findById(id.toString());
-      if(!existeProducto){
-         throw new Error("El producto no ha sido registrado en la base de datos");
+      
+      try{
+         const {id,precios}=args;
+         const existeProducto = await Producto.findById(id.toString());
+         if(!existeProducto){
+            throw new Error("El producto no ha sido registrado en la base de datos");
+         }
+         producto = await Producto.findOneAndUpdate({ _id: id },{precio:precios}, { new: true });
+         return producto;
+      }catch(error){
+         console.log(error)
       }
-      producto = await Producto.findOneAndUpdate({ _id: id },{precio:precios}, { new: true });
-      return producto;
    },
    crearProducto:async(_,args,ctx)=>{      
       const {nombre}= args;
@@ -62,12 +80,16 @@ const Resolvers={
       }      
    },
    eliminarProducto:async(_,{id})=>{
-      const existeProducto = await Producto.findById(id);
-      if (!existeProducto) {
-          throw new Error("El producto no ha sido registrado en la base de datos");
+      try{
+         const existeProducto = await Producto.findById(id);
+         if (!existeProducto) {
+             throw new Error("El producto no ha sido registrado en la base de datos");
+         }
+         producto = await Producto.findOneAndDelete({ _id: id })
+         return "El producto se ha eliminado con éxito";
+      }catch(error){
+         console.log(error)
       }
-      producto = await Producto.findOneAndDelete({ _id: id })
-      return "El producto se ha eliminado con éxito";
    },
    //usuarios
    nuevoUsuario: async(_, { input }) => {
@@ -109,20 +131,28 @@ const Resolvers={
           token: CrearToken(existe, process.env.SECRETA, '24h')
       }
   },cambiarContra: async(_,{password},ctx)=>{      
-   const buscarUsuario = await Usuario.findById(ctx.id)
-   if(!buscarUsuario){
-      return "No se encontró registro del usuario"
+   try{
+      const buscarUsuario = await Usuario.findById(ctx.id)
+      if(!buscarUsuario){
+         return "No se encontró registro del usuario"
+      }
+      //Le tenemos que poner un mínimo de simbolos?????
+      const salt = await bcryptjs.genSalt(10);
+      buscarUsuario.password = await bcryptjs.hash(password, salt)   
+      contra = await Usuario.findOneAndUpdate({_id:ctx.id},buscarUsuario,{new:true})
+      return "Contraseña actualizada.";
+   }catch(error){
+      console.log(error)
    }
-   //Le tenemos que poner un mínimo de simbolos?????
-   const salt = await bcryptjs.genSalt(10);
-   buscarUsuario.password = await bcryptjs.hash(password, salt)   
-   contra = await Usuario.findOneAndUpdate({_id:ctx.id},buscarUsuario,{new:true})
-   return "Contraseña actualizada.";
    },
    eliminarUsuario:async(_,{ },ctx)=>{
-      const buscarUsuario = await Usuario.findById(ctx.id);
-      user = await Usuario.findOneAndDelete({_id : ctx.id})
-      return "Usuario eliminado con exito";
+      try{
+         const buscarUsuario = await Usuario.findById(ctx.id);
+         user = await Usuario.findOneAndDelete({_id : ctx.id})
+         return "Usuario eliminado con exito";
+      }catch(error){
+         console.log(error)
+      }
     }
  }
 }
