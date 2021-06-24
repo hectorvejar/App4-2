@@ -18,9 +18,9 @@ app.use(cors())
 const server = new ApolloServer({
     typeDefs,
     resolvers,
-    playground: {
-        endpoint: 'http://localhost:3000/graphql'
-    },context:({ req }) => {
+    playground:true,
+    iintrospection: true
+    ,context:({ req }) => {
       const token = req.headers['authorization'] || "";
         if (token) {
             try {
