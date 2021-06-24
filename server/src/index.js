@@ -19,7 +19,7 @@ const server = new ApolloServer({
     typeDefs,
     resolvers,
     playground: {
-        endpoint: process.env.PORT||'http://localhost:3000/graphql'
+        endpoint: 'http://localhost:3000/graphql'
     },context:({ req }) => {
       const token = req.headers['authorization'] || "";
         if (token) {
